@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>Song {{ song.name }}</h1>
+<table class ="table">
+    <thead>
+    <tr>
+        <th scope="col">Rating</th>
+        <th scope="col">Content</th>
+        <th scope="col">User</th>
+        <th scope="col">Date edited</th>
+    </tr>
+    </thead>
+
+
+<!-- A table containing each of the reviews by the users-->
+    {% if review_list %}
+    <body>
+        {%for item in review_list%}
+            <tr>
+                <td>{{ item.rating }}</td>
+                <td><a href="{% url 'review_edit' song.pk item.pk %}">{{ item.content }}</a></td>
+                <td>{{ item.user}}</td>
+                <td>{{ item.date_edited }}</td>
+            </tr>
+        {% endfor %}
+    {% else %}
+    <span class="text-info">Sorry, no reviews.</span>
+    {% endif %}
+    </body>
+    </table>
+
+</body>
+{% endblock %}

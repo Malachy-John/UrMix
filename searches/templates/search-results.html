@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% block title %}
+    {{search_text}}
+    {% if form.is_valid and search_text %}
+        Search Results for "{{ search_text }}"
+    {% else %}
+        MovieOn Search
+    {% endif %}
+{% endblock %}
+{% block content %}
+<h2>Search for Songs</h2>
+<form>
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Search</button>
+</form>
+{% if form.is_valid and search_text %}
+<h3>Search Results for <em>{{ search_text }}</em></h3>
+<ul class="list-group">
+    {% for item in song_list %}
+    <li class="list-group-item">
+        {% if item.song.album.cover %}
+        <img src= "{{ item.song.album.cover.url }}">
+        <br>
+        {% endif %}
+        {% if user.is_authenticated %}
+        <span class="text-info">Title: </span> <a href="{% url 'song_edit' item.song.pk %}">{{ item.song }}</a>
+        {% else %}
+        <span class="text-info">Name: </span>{{ item.song }}
+        {% endif %}
+        <br>
+        <span class="text-info">Year: </span>{{ item.song.year }}
+        <br>
+         {% if request.user.is_staff %}
+        <span class="text-info">Artist: </span> <a href = "{% url 'artist_edit' item.song.artist.pk %}">{{ item.song.artist }}</a>
+        <br>
+        {% else %}
+        <span class="text-info">Artist: </span> {{ item.song.artist }}
+        <br>
+        {% endif %}
+        <span class="text-info">Album: </span> {{ item.song.album.name }}
+        <br>
+        <span class="text-info">Genres: </span>
+        {% for value in item.genre_list %}{{ value }}{% if not forloop.last %}, {% endif %}{% endfor %}
+        <br>
+        <span class="text-info">Record Labels: </span>
+        {% for value in item.record_label_names %}{{ value }}{% if not forloop.last %}, {% endif %}{% endfor %}
+        <br>
+        <span class="text-info">Locations: </span>
+        {% for value in item.record_label_locations %}{{ value }}{% if not forloop.last %}, {% endif %}{% endfor %}
+        <br>
+
+        <span class="text-info">Number of song reviews: </span> {{ item.number_of_reviews }}
+        <br>
+        <span class="text-info">Rating: </span><span class="badge
+                badge-primary badge-pill"> {{item.song_rating}} </span>
+
+        <br>
+        {% if request.user.is_authenticated %}
+        {% if item.song_rating%}
+                <!-- href links to any reviews of that movie-->
+                <a class="btn btn-primary btn-sm active" role="button"
+aria-pressed="true" href="{% url 'song_reviews' item.song.pk %}"> Edit Reviews</a>
+                {% endif %}
+        <br>
+        <a class="btn btn-primary btn-sm active" role="button"
+aria-pressed="true" href="{% url 'review_create'  item.song.pk %}"> Write a Review for this song</a>
+        {% if request.user.is_staff %}
+        <br>
+        <a class="btn btn-primary btn-sm active" role="button"
+aria-pressed="true" href="{% url 'album_media'  item.song.album.id %}"> Album Media</a>
+        {% endif %}
+        {% endif %}
+        {% empty %}
+        <li class="list-group-item">No results found.
+
+
+        {% endfor %}
+    </li>
+
+</ul>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Song{% endblock %}
+{% block heading %}Profile{% endblock %}
+{% block content %}
+<style>
+.flexrow { display: flex;
+ border: 2px black;
+}
+.flexrow > div { flex: 1; }
+.infocell {
+ border: 2px solid green;
+ border-radius: 5px 25px;
+ background-color: white;
+ padding: 5px;
+ margin: 20px 5px 5px 5px;
+}
+</style>
+         <div class="flexrow" >
+                 <div class="infocell" >
+                         <p>Profile</p>
+                         <p>
+                         Username: {{ request.user.username }} <br>
+                         Name: {{ request.user.first_name }} {{ request.user.last_name }}<br>
+                         Date Joined: {{ request.user.date_joined }} <br>
+                         Email: {{ request.user.email }}<br>
+                         Last Login: {{ request.user.last_login }}<br>
+                         </p>
+                 </div>
+                 <div class="infocell" >
+                         <p>Viewed Songs</p>
+                         <p>
+                         {% for song_id, song_name in request.session.viewed_songs %}
+                         <a href="/songs/{{ song_id }}">{{ song_name }}</a><br>
+                         {% empty %}
+                         No recently viewed songs found.
+                         {% endfor %}
+                         </p>
+                 </div>
+                 <div class="infocell" >
+                         <p>Search History</p>
+                         <p>
+                         {% for search_text, search_item in request.session.viewed_searches %}
+                         <a href="#">{{ search_text }} ({{ search_item }})</a><br>
+                         {% empty %}
+                         No recent searches found.
+                         {% endfor %}
+                         </p>
+                 </div>
+         </div>
+{% endblock %}
